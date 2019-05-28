@@ -1,0 +1,70 @@
+node {
+      
+   properties([parameters([choice(name: 'opt', choices: ['deploy','roollback'],description: 'can deploy and rollback')])])
+   def mvnHome = tool 'M3' 
+   def jarName
+   def ProjectName
+   def rsy_name
+   def Time
+   def bak_path='/home/ci/bak'
+   def git_url =  'ssh://git@gitlab.xxxxxx:/fco/spring-demo.git'
+   stage('Preparation') { 
+      Time = new Date().format('MMddHHmm')
+      ProjectName = sh(returnStdout: true, script: "echo $git_url | awk  -F[/.] '{print \$7}'").trim()
+      if(opt ==~ "deploy"   ) { 
+      git "$git_url"
+    
+     }
+   }
+   stage('Build') {
+         if(opt ==~ "deploy"   ) { 
+         sh "'${mvnHome}/bin/mvn' clean package -Dmaven.test.skip=true"
+                    }
+   }
+   stage('Results') {
+      if(opt ==~ "deploy"   ) { 
+      archiveArtifacts 'target/*.jar'
+      jarName = sh(returnStdout: true, script: "ls ./target   | egrep  '(war|jar)\$'" ).trim()
+      echo "$jarName"
+      rsy_name = Time +"_" + jarName
+      sh "mkdir -p $bak_path/${ProjectName}"
+      sh " cp ./target/$jarName  $bak_path/${ProjectName}/$rsy_name"
+      //keep version nunber
+      sh(returnStdout: true, script: "cd ~/bak/${ProjectName} && ls -tl  | awk '{if(NR>3){print \" rm \" \$NF}}' | sh ")
+                                }
+      }
+    stage('roollbak'){
+        if(opt ==~ "roollback"  ){
+        args = sh(returnStdout: true, script: "ls -t $bak_path/${ProjectName}/ | awk  -F '/'  '{print \$NF}'" ).trim()    
+         rsy_name = input(
+            id: "jar",
+            message: 'Choose a deploy environment',
+            parameters: [
+                [
+                    $class: 'ChoiceParameterDefinition',
+                    choices: "$args",
+                    name: 'Env'
+                ]
+            ]
+        )
+        }
+    }  
+    stage('deploy_test01'){
+        ansiColor('xterm') {
+        ansiblePlaybook( 
+        playbook: '/home/ci/sudeploy-test/spring_deloy.yml',
+        inventory: '/home/ci/sudeploy-test/inventory/hosts', 
+        colorized: true,
+        extraVars: [
+          'deploy_path' : "/data/app/${ProjectName}" ,
+          'service_name':  "$ProjectName" ,     //"$ProjectName",
+          'user': 'app',
+          'hosts': "test01",//ip ohostname r 
+          'deploy_file':  "/home/ci/bak/$ProjectName/$rsy_name",
+          'start_cmd': "nohup /usr/local/jdk/bin/java  -jar $rsy_name  --server.address=0.0.0.0   >> ${ProjectName}.log  2>&1 &",
+          'service_port': 8000   //chker port is listenning
+        ]
+        ) 
+}
+    }  
+}
