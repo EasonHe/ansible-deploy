@@ -52,8 +52,8 @@ node {
     stage('deploy_test01'){
         ansiColor('xterm') {
         ansiblePlaybook( 
-        playbook: '/home/ci/sudeploy-test/spring_deloy.yml',
-        inventory: '/home/ci/sudeploy-test/inventory/hosts', 
+        playbook: '/home/ci/ansible-deploy/spring_deloy.yml',
+        inventory: '/home/ci/ansible-deploy/inventory/hosts', 
         colorized: true,
         extraVars: [
           'deploy_path' : "/data/app/${ProjectName}" ,
