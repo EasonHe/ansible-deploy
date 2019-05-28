@@ -29,7 +29,7 @@ node {
       rsy_name = Time +"_" + jarName
       sh "mkdir -p $bak_path/${ProjectName}"
       sh " cp ./target/$jarName  $bak_path/${ProjectName}/$rsy_name"
-      //keep version nunber
+      //keep version number   NR>3  keep 2 history  version ,Version number = 3-1 
       sh(returnStdout: true, script: "cd ~/bak/${ProjectName} && ls -tl  | awk '{if(NR>3){print \" rm \" \$NF}}' | sh ")
                                 }
       }
