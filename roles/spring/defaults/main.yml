@@ -1,0 +1,6 @@
+ThePassword: "fggnGG33"
+deploy_service_user: app
+deploy_group: app
+listen_ip: 0.0.0.0
+deploy_service_port_delay: 2
+deploy_service_port_timeout: 60

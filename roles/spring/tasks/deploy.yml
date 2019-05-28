@@ -1,0 +1,41 @@
+ - name:  rm   jar file  in  {{deploy_path}}
+   shell:  "rm -f  {{deploy_path}}/*.jar" 
+ - name:  from  local {{deploy_file}} to remote {{deploy_path}}
+   copy:  src={{deploy_file}}  dest="{{deploy_path}}/{{deploy_file.rsplit('/',1)[-1]}}"
+ - name:  get  process with options  pid  
+   shell: "ps -ef |grep java| grep -vE 'ansible-playbook|grep'   | egrep  '{{service_name}}|{{service_port}}' | awk '{print $2}'"
+   register: pid       
+ - name: show pid
+   debug: var=pid verbosity=0
+  
+
+ - name: kill  running processes  pid
+   shell: " kill {{ item }}"
+   with_items: "{{pid.stdout_lines}}"
+   when:  pid.stdout_lines  is  defined 
+
+ - wait_for: path="/proc/{{pid.stdout_lines[0]}}/status" state=absent  timeout=10
+   register: killed_pid
+   ignore_errors: true
+   when: pid.stdout_lines != []    
+  
+ - name: show status pid
+   debug: var=killed_pid verbosity=0
+ 
+ - name: force kill process  pid
+   shell: "kill -9 {{pid.stdout_lines[0]}}"
+   register: fokill
+   when:   pid.stdout_lines != [] or  killed_pid.state != "absent" 
+   ignore_errors: true
+ 
+
+ - name:  show force kill
+   debug: var=fokill verbosity=0 
+ - name: start proceess  with  options
+   shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
+   register: show_start
+ - name: show start
+   debug: var=show_start
+
+ - name: deloy | 等待端口开启。
+   wait_for: port={{service_port}} delay={{ deploy_service_port_delay }} timeout={{ deploy_service_port_timeout }} host={{listen_ip}} state=started

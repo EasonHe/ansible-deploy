@@ -1,0 +1,11 @@
+ - name: check jar
+   shell: ls {{ deploy_file }}
+   connection: local
+   become: no
+   register: deploy_file_stats
+   changed_when: false
+   failed_when: deploy_file_stats.stdout_lines[0] == "" or deploy_file == ""
+   #检查jar 包是否存在
+
+ - name: check  path {{ deploy_path }} exist
+   file: path="{{ deploy_path }}"    state=directory

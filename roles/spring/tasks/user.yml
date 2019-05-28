@@ -1,0 +1,4 @@
+ - name: create group {{deploy_group}}
+   group: name={{deploy_group}} 
+ - name: create new user {{ deploy_service_user }}
+   user: name={{ deploy_service_user }} shell=/bin/bash group={{deploy_group}}  password={{ ThePassword |password_hash('sha512') }} update_password=on_create 
