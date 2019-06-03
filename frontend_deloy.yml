@@ -1,0 +1,10 @@
+- hosts: "{{hosts}}"
+  gather_facts: false
+  remote_user: "{{user}}"
+  vars:
+    - deploy_file: /home/ci/201901021215-test
+    - service_name: test
+    - deploy_path: /home/nginx/bak/{{ service_name }}
+    - link_path:  /usr/local/nginxserver/nginx/html
+  roles:
+    - frontend

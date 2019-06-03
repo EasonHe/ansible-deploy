@@ -1,0 +1,8 @@
+- name: check path  is exist 
+  connection: local
+  become: no
+  stat: path={{ deploy_file }} 
+  register: deploy_file_stats
+  failed_when: deploy_file_stats.stat.exists == false
+- name: check remote  path  if absent    mkdir  it 
+  file: path="{{ deploy_path }}"    state=directory 

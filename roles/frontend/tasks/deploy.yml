@@ -1,0 +1,13 @@
+- name: copy {{ deploy_file }}  to remote path
+  copy: src={{deploy_file}}  dest={{deploy_path}}
+- name: link  
+  file:  path="{{ link_path }}/{{ service_name }}"  state=link force=yes src="{{deploy_path}}/{{deploy_file.rsplit('/',1)[-1]}}"
+- name: the  path have  files 
+  shell: "ls {{ deploy_path }} | wc -l" 
+  register: file_number
+- name: show  file_number
+  debug: var=file_number
+
+- name: rm file history
+  shell: " cd  {{deploy_path}} && rm -r `ls ./ |egrep -v  {{deploy_file.rsplit('/',1)[-1]}}`" 
+  when:   file_number.stdout | int  >  1
