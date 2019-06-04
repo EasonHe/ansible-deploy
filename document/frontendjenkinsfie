@@ -1,0 +1,69 @@
+node {
+      
+   properties([parameters([choice(name: 'opt', choices: ['deploy','roollback'],description: 'can deploy and rollback')])])
+   int version_number=1
+   def ProjectName
+   def rsy_name
+   def Time
+   def bak_path='/home/ci/bak'
+   def git_url =  'ssh://git@gitlab.raiyee.cn:10022/cpp/cpp-activity-frontend.git'
+   stage('Preparation') { 
+      Time = new Date().format('MMddHHmm')
+      ProjectName = sh(returnStdout: true, script: "echo $git_url | awk  -F[/.] '{print \$7}'").trim()
+      if(opt ==~ "deploy"   ) { 
+      git "$git_url"
+    
+     }
+   }
+   stage('Build') {
+        if(opt ==~ "deploy"   ) { 
+        sh 'yarn  && yarn build:test'
+        rsy_name = Time +"_" +  ProjectName  
+        echo rsy_name 
+                    }
+   }
+   stage('Results') {
+      if(opt ==~ "deploy"   ) { 
+      sh "mkdir -p $bak_path/${ProjectName}"
+      sh " cp -rp  dist-test  $bak_path/${ProjectName}/$rsy_name"
+      //keep version number 
+      ++version_number
+       println(version_number);
+      sh(returnStdout: true, script: "cd $bak_path/${ProjectName} && ls -tl  | awk '{if(NR>$version_number){print \" rm -rf \" \$NF}}' | sh ")
+                                }
+      }
+    stage('roollbak'){
+        if(opt ==~ "roollback"  ){
+        args = sh(returnStdout: true, script: "ls -t $bak_path/${ProjectName}/ | awk  -F '/'  '{print \$NF}'" ).trim()    
+         rsy_name = input(
+            id: "jar",
+            message: 'Choose a deploy environment',
+            parameters: [
+                [
+                    $class: 'ChoiceParameterDefinition',
+                    choices: "$args",
+                    name: 'Env'
+                ]
+            ]
+        )
+        }
+    }  
+    stage('deploy_test01'){
+        ansiColor('xterm') {
+        ansiblePlaybook( 
+        playbook: '/home/ci/sudeploy/frontend_deloy.yml',
+        inventory: '/home/ci/sudeploy/inventory/hosts', 
+        colorized: true,
+        extraVars: [
+          'deploy_path' : "/data/resource/bak/${ProjectName}" ,
+          'service_name':  "$ProjectName" ,     //"$ProjectName",
+          'user': 'nginx',
+          'hosts': "test01",//ip  or  hostname
+          'link_path': "/usr/local/nginxserver/nginx/html",
+          'deploy_file':  "$bak_path/$ProjectName/$rsy_name",
+         
+        ]
+        ) 
+}
+    }  
+}
