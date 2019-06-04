@@ -2,6 +2,7 @@ node {
       
    properties([parameters([choice(name: 'opt', choices: ['deploy','roollback'],description: 'can deploy and rollback')])])
    def mvnHome = tool 'M3' 
+   int version_number=1
    def jarName
    def ProjectName
    def rsy_name
@@ -29,8 +30,9 @@ node {
       rsy_name = Time +"_" + jarName
       sh "mkdir -p $bak_path/${ProjectName}"
       sh " cp ./target/$jarName  $bak_path/${ProjectName}/$rsy_name"
-      //keep version number   NR>3  keep 2 history  version ,Version number = 3-1 
-      sh(returnStdout: true, script: "cd ~/bak/${ProjectName} && ls -tl  | awk '{if(NR>3){print \" rm \" \$NF}}' | sh ")
+      ++version_number
+      println(version_number);
+      sh(returnStdout: true, script: "cd ~/bak/${ProjectName} && ls -tl  | awk '{if(NR>$version_number){print \" rm \" \$NF}}' | sh ")
                                 }
       }
     stage('roollbak'){
