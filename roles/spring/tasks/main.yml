@@ -1,4 +1,4 @@
 - import_tasks: check.yml
-  when: rollback is  not defined  
+  #when: rollback is  not defined  
 - import_tasks: deploy.yml 
 
