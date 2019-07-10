@@ -6,7 +6,7 @@ node {
    def rsy_name
    def Time
    def bak_path='/home/ci/bak'
-   def git_url =  'ssh://git@gitlab.raiyee.cn:10022/cpp/cpp-activity-frontend.git'
+   def git_url =  'ssh://git@gitlab.fraiyee.cn:10022/cpp/cpp-activity-frontend.git'
    stage('Preparation') { 
       Time = new Date().format('MMddHHmm')
       ProjectName = sh(returnStdout: true, script: "echo $git_url | awk  -F[/.] '{print \$7}'").trim()
