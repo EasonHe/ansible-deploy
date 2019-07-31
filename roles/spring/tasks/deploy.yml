@@ -1,7 +1,7 @@
  - name:  rm   jar file  in  {{deploy_path}}
    shell:  "rm -f  {{deploy_path}}/*.jar" 
  - name:  from  local {{deploy_file}} to remote {{deploy_path}}
-   copy:  src={{deploy_file}}  dest="{{deploy_path}}/{{deploy_file.rsplit('/',1)[-1]}}"
+   synchronize:  src={{deploy_file}}  dest="{{deploy_path}}/{{deploy_file.rsplit('/',1)[-1]}}"
  - name:  get  process with options  pid  
    shell: "ps -ef |grep java| grep -vE 'ansible-playbook|grep'   | egrep  '{{service_name}}.*{{service_port}}' | awk '{print $2}'"
    register: pid       
