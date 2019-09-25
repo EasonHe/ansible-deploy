@@ -2,8 +2,9 @@ jenkins +  ansible  deploy  spring boot  and  deploy vue static files
 Support rollback
 # ansible-deploy
 1. install  jenkins  plugin 
-   AnsiColor and
-   Ansible plugin
+   AnsiColor and,
+   Ansible plugin,
+   pipeline
 2.use  jenkinsfile    to  build  project  
 Example   in document
 
