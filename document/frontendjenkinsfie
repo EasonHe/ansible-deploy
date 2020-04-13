@@ -55,7 +55,7 @@ node {
         inventory: '/home/ci/sudeploy/inventory/hosts', 
         colorized: true,
         extraVars: [
-          'deploy_path' : "/data/resource/bak/${ProjectName}" ,
+          'deploy_path' : "${bak_path}/${ProjectName}" ,
           'service_name':  "$ProjectName" ,     //"$ProjectName",
           'user': 'nginx',
           'hosts': "test01",//ip  or  hostname
