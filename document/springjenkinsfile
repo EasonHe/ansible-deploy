@@ -61,7 +61,8 @@ node {
           'deploy_path' : "/data/app/${ProjectName}" ,
           'service_name':  "$ProjectName" ,     //"$ProjectName",
           'user': 'app',
-          'hosts': "test01",//ip ohostname r 
+          'hosts': "test01",//ip ohostname r
+          'jar_name': "$rsy_name",
           'deploy_file':  "$bak_path/$ProjectName/$rsy_name",
           'start_cmd': "nohup /usr/local/jdk/bin/java  -jar $rsy_name  --server.address=0.0.0.0   >> ${ProjectName}.log  2>&1 &",
           'service_port': 8000   // check port is listenning
