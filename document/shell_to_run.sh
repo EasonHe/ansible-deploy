@@ -18,7 +18,7 @@ case $var in
     echo  $version
     break
   done
-  ansible-playbook /home/app/ansible-deploy/frontend_deloy.yml -i /home/app/ansible-deploy/inventory/hosts \
+ansible-playbook /home/app/ansible-deploy/frontend_deloy.yml -i /home/app/ansible-deploy/inventory/hosts \
  -e deploy_path="/home/app/bak/$var" \
  -e service_name="$var" \
  -e user="app" \
@@ -35,7 +35,8 @@ case $var in
     echo  $version
     break
   done
-  port=2001
+
+port=2001
 ProjectName=$var
 ansible-playbook /home/app/ansible-deploy/spring_deloy.yml -i /home/app/ansible-deploy/inventory/hosts \
 -e deploy_path="/home/app/$ProjectName" \

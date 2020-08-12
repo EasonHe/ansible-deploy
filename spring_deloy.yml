@@ -9,4 +9,4 @@
     - service_port: 8000
     - start_cmd:  "nohup java  -jar  11272050_demo-0.0.1-SNAPSHOT.jar >> demo.log&"
   roles:
-    - spring 
+    - spring
