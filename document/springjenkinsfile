@@ -1,3 +1,4 @@
+//脚本试流水线写法
 node {
       
    properties([parameters([choice(name: 'opt', choices: ['deploy','roollback'],description: 'can deploy and rollback')])])
