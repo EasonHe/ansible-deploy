@@ -83,7 +83,7 @@ ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/
 -e service_port="$port" \
 -e deploy_file="$bak_path/${ProjectName}/$version" \
 -e "start_cmd='nohup  java -Dserver.port=$port -jar $version --server.address=0.0.0.0  >> /data01/weixin_logs/${ProjectName}02.log 2>&1 &'"
-echo "$var finished deployment";;
+echo "$var finished deployment"
 
 #第二和第三台主机
 port=8201
@@ -109,7 +109,7 @@ ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/
 -e deploy_path="/opt/weixin/app/$ProjectName/instance02" \
 -e service_name="$var" \
 -e user="weixin" \
--e hosts="wechat-[02-03]" \
+-e hosts="wechat-server[01:02]" \
 -e service_port="$port" \
 -e deploy_file="$bak_path/${ProjectName}/$version" \
 -e "start_cmd='nohup  java -Dserver.port=$port -jar $version --server.address=0.0.0.0  >> /data01/weixin_logs/${ProjectName}02.log 2>&1 &'"
@@ -176,7 +176,7 @@ ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/
 -e deploy_path="/opt/weixin/app/$ProjectName/instance02" \
 -e service_name="$var" \
 -e user="weixin" \
--e hosts="box-[02-03]" \
+-e hosts="box-hub[01:02]" \
 -e service_port="$port" \
 -e deploy_file="$bak_path/${ProjectName}/$version" \
 -e "start_cmd='nohup  java -Dserver.port=$port -jar $version --server.address=0.0.0.0  >> /data01/weixin_logs/${ProjectName}02.log 2>&1 &'"
