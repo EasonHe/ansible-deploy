@@ -9,4 +9,4 @@
    register: show_stop
 
  - name: show stop 
-   debug: var=show_stop
+   debug: var=show_stop['stdout_lines']

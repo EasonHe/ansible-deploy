@@ -2,15 +2,14 @@
    shell: "pm2 list"
    register: process       
  - name: show  process
-   debug: var=process verbosity=0
+   debug: var=process['stdout_lines'] verbosity=0
   
  - name: start proceess  with  options
    shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
    register: show_start
 
  - name: show start
-   debug: var=show_start
-
+   debug: var=show_start['stdout_lines']
 
  - name: deloy | 等待端口开启。
    wait_for: port={{service_port}} delay={{ deploy_service_port_delay }} timeout={{ deploy_service_port_timeout }} host={{listen_ip}} state=started
