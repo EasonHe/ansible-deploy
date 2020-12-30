@@ -23,6 +23,8 @@
 test01
 test02
 
+[app]
+157    ansible_ssh_host=172.17.211.157  
 # If you have multiple hosts following a pattern you can specify
 # them like this:
 
