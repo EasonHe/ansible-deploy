@@ -3,10 +3,10 @@
   remote_user: "{{user}}"
   vars:
     - deploy_file:  /home/ci/.jenkins/workspace/fco-docekr-spring-demo/target/demo-0.0.1-SNAPSHOT.jar
-    - INSTANCE_NAME:  demo
+    - instance_name:  demo
     - deploy_path: "~/app/{{service_name}}"
     - service_port: 8000
     - start_cmd:  "pm2  start  deployment.yml"
-    - ARGS:  "-Dserver.port=5000 -jar demo-0.0.1-SNAPSHOT.jar"
+    - args:  "-Dserver.port=5000 -jar demo-0.0.1-SNAPSHOT.jar"
   roles:
     - spring
