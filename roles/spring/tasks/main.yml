@@ -10,11 +10,11 @@
 - import_tasks: stop.yml
   when: ops=="stop"
 
- - name: pm2 list 
-   shell: "pm2 list"
-   register: list 
- - name: show 
-   debug: var=list['stdout_lines']
+- name: pm2 list 
+  shell: "pm2 list"
+  register: list 
+- name: show 
+  debug: var=list['stdout_lines']
 
 
   
