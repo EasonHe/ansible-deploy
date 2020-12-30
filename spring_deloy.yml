@@ -2,11 +2,13 @@
   gather_facts: false
   remote_user: "{{user}}"
   vars:
-    - deploy_file:  /home/ci/.jenkins/workspace/fco-docekr-spring-demo/target/demo-0.0.1-SNAPSHOT.jar
+    - deploy_file: /home/ci/.jenkins/workspace/fco-docekr-spring-demo/target/demo-0.0.1-SNAPSHOT.jar
     - instance_name:  demo
     - deploy_path: "~/app/{{service_name}}"
     - service_port: 8000
-    - start_cmd:  "pm2  start  deployment.yml"
-    - args:  "-Dserver.port=5000 -jar demo-0.0.1-SNAPSHOT.jar"
+    - start_cmd: "pm2  start  deployment.yml"
+    - java_bin: java
+    - args: "-Dserver.port=5000 -jar demo-0.0.1-SNAPSHOT.jar"
+
   roles:
     - spring

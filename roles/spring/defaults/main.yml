@@ -7,7 +7,7 @@ deploy_service_port_timeout: 60
 #LOG_FILE: "/dev/null"
 ERROR_FILE: "/dev/null"
 OUT_FILE: "/dev/null" 
-JAVA_BIN: java
+JAVA_BIN: "{{java_bin}}"
 WORK_SPCE: "{{deploy_path}}"
 INSTANCE_NAME: "{{instance_name}}"
 ARGS: "{{args}}"
