@@ -8,3 +8,4 @@ deploy_service_port_timeout: 60
 ERROR_FILE: "/dev/null"
 OUT_FILE: "/dev/null" 
 JAVA_BIN: java
+WORK_SPCE:"{{deploy_path}}""
