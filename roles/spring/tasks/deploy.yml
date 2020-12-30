@@ -7,7 +7,7 @@
    shell: "pm2 list"
    register: process       
  - name: show  process
-   debug: var=process['cmd'] verbosity=0
+   debug: var=process['stdout_lines'] verbosity=0
   
  - name: cp start template yaml  to remote
    template: src=spring.j2 dest="{{deploy_path}}/spring.yaml"
