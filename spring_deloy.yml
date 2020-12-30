@@ -8,7 +8,7 @@
     - service_port: 8000
     - start_cmd: "pm2  start  deployment.yml"
     - java_bin: java
-    - args: "-Dserver.port=5000 -jar demo-0.0.1-SNAPSHOT.jar"
+    - args: "-Dserver.port={{service_port}} -jar demo-0.0.1-SNAPSHOT.jar"
 
   roles:
     - spring
