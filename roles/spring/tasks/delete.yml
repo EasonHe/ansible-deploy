@@ -9,7 +9,7 @@
    register: show_delete 
 
  - name: show delete 
-   debug: var=show_delete['stdout_lines']
+   debug: var=show_delete['cmd']
 
  - name: delete workspace
    shell:  "mv  {{ deploy_path }} /tmp/" 

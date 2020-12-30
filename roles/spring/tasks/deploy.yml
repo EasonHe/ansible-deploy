@@ -22,9 +22,5 @@
  - name: deloy | 等待端口开启。
    wait_for: port={{service_port}} delay={{ deploy_service_port_delay }} timeout={{ deploy_service_port_timeout }} host={{listen_ip}} state=started
  
- - name: pm2 list 
-   shell: "pm2 list"
-   register: list 
- - name: show 
-   debug: var=list['stdout_lines']
+
 

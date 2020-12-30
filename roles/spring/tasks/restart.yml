@@ -8,8 +8,9 @@
    shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
    register: show_start
 
- - name: show start
-   debug: var=show_start['stdout_lines']
+ - name: show restart
+   debug: var=show_start['cmd']
 
  - name: deloy | 等待端口开启。
    wait_for: port={{service_port}} delay={{ deploy_service_port_delay }} timeout={{ deploy_service_port_timeout }} host={{listen_ip}} state=started
+ 

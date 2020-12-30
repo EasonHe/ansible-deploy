@@ -10,6 +10,12 @@
 - import_tasks: stop.yml
   when: ops=="stop"
 
+ - name: pm2 list 
+   shell: "pm2 list"
+   register: list 
+ - name: show 
+   debug: var=list['stdout_lines']
+
 
   
      # not required. The name of the imported file is specified directly without any other option.,Most keywords, including loops and conditionals, only applied to the imported tasks, not to this statement itself. If you need any of those to apply, use M(include_tasks) instead.
