@@ -229,7 +229,66 @@ ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/
 -e "start_cmd='nohup  java -Dserver.port=$port -jar $version --server.address=0.0.0.0  >> ${ProjectName}01.log 2>&1 &'"
 echo "$var finished deployment";;
 
+######rpns-backend
+"rpns-backend")
+  name=`ls -t $bak_path/${var}/ | awk  -F '/'  '{print $NF}'`
+  select  version in `echo $name` ; do
+    echo  $version
+    break
+  done
+#实例1
+port=8221
+ProjectName=$var
+ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/ansible-deploy/inventory/hosts \
+-e deploy_path="/opt/weixin/app/$ProjectName/instance01" \
+-e service_name="$var" \
+-e user="weixin" \
+-e hosts="rpns-01" \
+-e service_port="$port" \
+-e deploy_file="$bak_path/${ProjectName}/$version" \
+-e "start_cmd='nohup  java -Djava.security.egd=file:/dev/./urandom -jar $version  --Rbackend.context-path=/rpns --Rbackend.port=$port --Rcluster.back.host=192.168.98.154 --Rcluster.back.port=11093  >> /opt/data/weixin_logs/${ProjectName}01.log 2>&1 &'"
 
+if (test $? -ne 0)
+then
+echo "第一个实例部署失败"
+exit 222
+fi
+#实例2
+port=8221
+ProjectName=$var
+ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/ansible-deploy/inventory/hosts \
+-e deploy_path="/opt/weixin/app/$ProjectName/instance02" \
+-e service_name="$var" \
+-e user="weixin" \
+-e hosts="rpns-02" \
+-e service_port="$port" \
+-e deploy_file="$bak_path/${ProjectName}/$version" \
+-e "start_cmd='nohup  java -Djava.security.egd=file:/dev/./urandom -jar $version  --Rbackend.context-path=/rpns --Rbackend.port=$port --Rcluster.back.host=192.168.98.154 --Rcluster.back.port=11093  >> ${ProjectName}01.log 2>&1 &'"
+
+port=8221
+ProjectName=$var
+ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/ansible-deploy/inventory/hosts \
+-e deploy_path="/opt/weixin/app/$ProjectName/instance02" \
+-e service_name="$var" \
+-e user="weixin" \
+-e hosts="rpns-03" \
+-e service_port="$port" \
+-e deploy_file="$bak_path/${ProjectName}/$version" \
+-e "start_cmd='nohup  java -Djava.security.egd=file:/dev/./urandom -jar $version  --Rbackend.context-path=/rpns --Rbackend.port=$port --Rcluster.back.host=192.168.98.154 --Rcluster.back.port=11093  >> ${ProjectName}01.log 2>&1 &'"
+echo "$var finished deployment";;
+
+rpns-frontend)
+port=8151
+ProjectName=$var
+ansible-playbook /opt/hdc/soft/ansible-deploy/spring_deloy.yml -i /opt/hdc/soft/ansible-deploy/inventory/hosts \
+-e deploy_path="/opt/weixin/app/$ProjectName/instance01" \
+-e service_name="$var" \
+-e user="weixin" \
+-e hosts="rpns-01" \
+-e service_port="$port" \
+-e deploy_file="$bak_path/${ProjectName}/$version" \
+-e "start_cmd='nohup java  -Djava.security.egd=file:/dev/./urandom    -jar  $version --Rinitial.backends=192.168.98.154:8221 --Rsocket.host=111.48.254.23 --Rsocket.port=8151 --Rcluster.front.port=11094     >> /opt/data/weixin_logs/${ProjectName}${port}.log  2>&1 &'"
+;;
 *)
 echo "go";;
 esac
