@@ -13,6 +13,11 @@
 
  - name: delete workspace
    shell:  "mv  {{ deploy_path }} /tmp/" 
+   register: show_mv
+   
+ - name: show mv
+   debug: var=show_mv
+
 
 
  
