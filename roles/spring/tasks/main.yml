@@ -1,4 +1,16 @@
 - import_tasks: check.yml
+  when: ops=="deploy"
   #when: rollback is  not defined  
 - import_tasks: deploy.yml 
+  when: ops=="deploy"
+- import_tasks: restart.yml
+  when: ops=="restart"
+- import_tasks: delete.yml
+  when: ops=="delete"
+- import_tasks: stop.yml
+  when: ops=="deploy"
+  
+     # not required. The name of the imported file is specified directly without any other option.,Most keywords, including loops and conditionals, only applied to the imported tasks, not to this statement itself. If you need any of those to apply, use M(include_tasks) instead.
+
+
 

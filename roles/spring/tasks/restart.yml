@@ -1,23 +1,16 @@
- - name:  rm   jar file  in  {{deploy_path}}
-   shell:  "rm -f  {{deploy_path}}/*.jar && rm -f  {{deploy_path}}/*.war " 
- - name:  from  local {{deploy_file}} to remote {{deploy_path}}
-   synchronize:  src={{deploy_file}}  dest="{{deploy_path}}/{{deploy_file.rsplit('/',1)[-1]}}"
- 
- - name:  get  process   
+- name:  get  process   
    shell: "pm2 list"
    register: process       
  - name: show  process
    debug: var=process verbosity=0
   
- - name: cp start template yaml  to remote
-   template: src=spring.j2 dest="{{deploy_path}}/spring.yaml"
-
  - name: start proceess  with  options
    shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
    register: show_start
 
  - name: show start
    debug: var=show_start
+
 
  - name: deloy | 等待端口开启。
    wait_for: port={{service_port}} delay={{ deploy_service_port_delay }} timeout={{ deploy_service_port_timeout }} host={{listen_ip}} state=started

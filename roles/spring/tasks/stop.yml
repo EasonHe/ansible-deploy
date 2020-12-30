@@ -1,0 +1,12 @@
+- name:  get  process   
+   shell: "pm2 list"
+   register: process       
+ - name: show  process
+   debug: var=process verbosity=0
+  
+ - name: start proceess  with  options
+   shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
+   register: show_stop
+
+ - name: show stop 
+   debug: var=show_stop
