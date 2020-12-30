@@ -4,7 +4,7 @@ deploy_group: app
 listen_ip: 0.0.0.0
 deploy_service_port_delay: 2
 deploy_service_port_timeout: 60
-#LOG_FILE: "/dev/null"
+LOG_FILE: "/dev/null"
 ERROR_FILE: "/dev/null"
 OUT_FILE: "/dev/null" 
 JAVA_BIN: "{{java_bin}}"

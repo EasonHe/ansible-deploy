@@ -3,6 +3,7 @@ apps:
     name: "{{INSTANCE_NAME}}"      # 程序名称demo
     cwd: "{{WORK_SPCE}}"  # /home/app/app/demo/instance01
     args: "{{ARGS}}" #-Dserver.port=5000 -jar demo-0.0.1-SNAPSHOT.jar
+    log_file: {{LOG_FILE}}
     error_file: "{{ERROR_FILE}}" #错误日志
     out_file: "{{OUT_FILE}}" #正常输出日志
    
