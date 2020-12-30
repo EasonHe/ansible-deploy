@@ -14,11 +14,16 @@
 
  - name: start proceess  with  options
    shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
-   register: show_start
+   register: show_cmd
 
+ - name: show cmd
+   debug: var=show_start['stdout_cmd']
 
  - name: deloy | 等待端口开启。
    wait_for: port={{service_port}} delay={{ deploy_service_port_delay }} timeout={{ deploy_service_port_timeout }} host={{listen_ip}} state=started
-
- - name: show start
+ 
+ - name: pm2 list 
+   shell: "pm2 list"
+   register: list 
    debug: var=show_start['stdout_lines']
+
