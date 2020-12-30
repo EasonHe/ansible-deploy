@@ -4,7 +4,7 @@
  - name: show  process
    debug: var=process verbosity=0
   
- - name: start proceess  with  options
+ - name: delete proceess  with  options
    shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
    register: show_delete 
 
@@ -14,7 +14,7 @@
  - name: delete workspace
    shell:  "mv  {{ deploy_path }} /tmp/" 
    register: show_mv
-   
+
  - name: show mv
    debug: var=show_mv
 
