@@ -25,5 +25,6 @@
  - name: pm2 list 
    shell: "pm2 list"
    register: list 
-   debug: var=show_start['stdout_lines']
+ - name: show 
+   debug: var=list['stdout_lines']
 
