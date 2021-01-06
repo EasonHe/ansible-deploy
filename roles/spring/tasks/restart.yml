@@ -5,7 +5,7 @@
    debug: var=process['stdout_lines'] verbosity=0
   
  - name: start proceess  with  options
-   shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
+   shell: "cd {{ deploy_path }} && source /etc/profile && pm2 restart {{instance_name}}"
    register: show_start
 
  - name: show restart

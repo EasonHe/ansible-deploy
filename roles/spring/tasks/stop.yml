@@ -5,7 +5,7 @@
    debug: var=process verbosity=0
   
  - name: start proceess  with  options
-   shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
+   shell: "cd {{ deploy_path }} && source /etc/profile && pm2 stop {{instance_name}}"
    register: show_stop
 
  - name: show stop 

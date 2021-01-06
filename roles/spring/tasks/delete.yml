@@ -5,7 +5,7 @@
    debug: var=process verbosity=0
   
  - name: delete proceess  with  options
-   shell: "cd {{ deploy_path }} && source /etc/profile && {{start_cmd}}"
+   shell: "cd {{ deploy_path }} && source /etc/profile && pm2 delete  {{instance_name}}"
    register: show_delete 
 
  - name: show delete 
