@@ -1,8 +1,8 @@
 - import_tasks: check.yml
-  when: ops=="deploy"
+  when: ops=="deploy"  | ops=="rollback" 
   #when: rollback is  not defined  
 - import_tasks: deploy.yml 
-  when: ops=="deploy"
+  when: ops=="deploy"  | ops=="rollback" 
 - import_tasks: restart.yml
   when: ops=="restart"
 - import_tasks: delete.yml
