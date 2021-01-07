@@ -2,7 +2,7 @@
   when: ops=="deploy"  | ops=="rollback" 
   #when: rollback is  not defined  
 - import_tasks: deploy.yml 
-  when: (ops=="deploy" ) or  (ops=="rollback")
+  when: (ops=="deploy") or  (ops=="rollback")
 - import_tasks: restart.yml
   when: ops=="restart"
 - import_tasks: delete.yml
