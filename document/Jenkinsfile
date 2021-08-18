@@ -1,0 +1,133 @@
+pipeline {
+  parameters {
+    string(name:'port', defaultValue: '1580', description: '端口号, 正常请不要修改它,一个主机一个实例使用此端口号')
+    choice( name: 'OPERATE', choices: ['deploy', 'restart','rollback','delete','stop'], description: '发布, 重启,回滚 ,删除实例，停止')
+  }
+  environment {
+    VERSION_NUMBER=2 //默认版本保留个数
+    GIT_TAG = null //看版本好没有及时commit id
+    JAR_FILE = null //打包出来的包名,这个会自动获取，这个打包完成之后会有
+    BAKUP_PATH = '~/bak' //打包完成后会自动备份
+    PROJECT_NAME= null // 工程名这个是要填写的，为了区分环境
+    TAG_FILE = null  //不用填写,默认是最新的文件
+    CHOICE_TAG_FILE= null //这个是一个选项，可以选以往的版本文件
+  }
+  agent any
+  stages {
+    //步骤一
+    stage('set PROJECT_NAME==JOB_NAME if name is null') {
+      //当工程名称为空时，使用jenkins的job名称
+      when {expression {PROJECT_NAME == "null"}} 
+      steps { 
+        script { PROJECT_NAME = "${JOB_NAME}"}
+      } 
+    }
+
+    stage('make version tag ') {
+      when {expression {OPERATE  == 'deploy'}}
+      steps {
+        script {
+          //生成git标签
+         GIT_TAG = sh(returnStdout: true, script: 'git describe    --tag   --always').trim()
+         echo GIT_TAG
+        }
+      } 
+    }
+    //步骤二
+    stage('build') {
+      when {expression {OPERATE  == 'deploy'}}
+      steps {
+        script {
+          echo "${GIT_TAG}"
+          sh  'mvn clean package -Dmaven.compile.fork=true -Dmaven.test.skip=true && ls -l'
+          JAR_FILE = sh(returnStdout: true, script: "ls ./target   | egrep  '(war|jar)\$'" ).trim()
+          archiveArtifacts 'target/*.jar'
+          sh "mkdir -p  ${BAKUP_PATH}/${JOB_NAME}"
+          sh "mv ${WORKSPACE}/target/$JAR_FILE ${BAKUP_PATH}/${JOB_NAME}/${GIT_TAG}~$JAR_FILE"
+          TAG_FILE ="${GIT_TAG}~$JAR_FILE"
+        }
+      }
+    }
+  
+    stage('rollback') {
+      //回滚时会选一个版本进行回退
+      when {expression {OPERATE  == 'rollback'}}
+      steps{
+       script {
+          //TAG_FILE = sh(returnStdout: true, script: "ls -lt $BAKUP_PATH/${JOB_NAME}/*.jar  | awk   -F '/'  'NR==1 {print \$NF}'" ).trim()
+          //JAR_FILE = sh(returnStdout: true, script: " echo $TAG_FILE  | awk   -F '~'  '{print \$NF}'" ).trim()
+          CHOICE_TAG_FILE = sh(returnStdout: true, script: "ls -lt $BAKUP_PATH/${JOB_NAME}/*.jar  | awk   -F '/'  '{print \$NF}'" ).trim()
+          TAG_FILE = input(
+            id: "jar",
+            message: 'Choose a deploy environment',
+            parameters: [
+                [
+                    $class: 'ChoiceParameterDefinition',
+                    choices: "$CHOICE_TAG_FILE",
+                    name: 'Env'
+                ]
+            ]
+        )
+        }
+       //input id: '0012', message: '选择一个安装包进行回退', ok: 'ok', parameters: [choice(choices: "$CHOICE_TAG_FILE", description: '选择一个安装包进行回退', name:'TAG_FILE')], submitterParameter: '001'
+        echo TAG_FILE
+     }
+   }
+
+    stage("OPERATE") {
+      steps {
+        ansiColor('xterm') {
+          ansiblePlaybook( 
+            playbook: "/home/app/bak/ansible-deploy/spring_deloy.yml",
+            inventory: "/home/app/bak/ansible-deploy/inventory/hosts",
+            colorized: true,
+            extraVars: [
+              'deploy_path': "/home/app/app/${PROJECT_NAME}01",
+              'instance_name': "${PROJECT_NAME}01",     //"$ProjectName",
+              'user': 'app',
+              'hosts': "saas-test-app01",//ip ohostname r 
+              'deploy_file': "$BAKUP_PATH/${JOB_NAME}/${TAG_FILE}",
+              'ops': "$OPERATE",
+              'start_cmd': "pm2 delete  spring.yaml && pm2 start spring.yaml",
+              'service_port': "$port",   //chker port is listenning
+              'java_bin': "java", //如果找不到环境变量则写具体路径
+              'ARGS': "-Dserver.port={{service_port}} -jar ${TAG_FILE} ",
+              'LOG_FILE': "~/.pm2/logs/demo.log",  //日志路径，可以做日志分离，比如正常日志和错误日志ERROR_FILE,OUT_FILE,默认是输出到 /dev/null
+           ]
+          ) 
+        }
+//
+        ansiColor('xterm') {
+          ansiblePlaybook( 
+            playbook: "/home/app/bak/ansible-deploy/spring_deloy.yml",
+            inventory: "/home/app/bak/ansible-deploy/inventory/hosts",
+            colorized: true,
+            extraVars: [
+              'deploy_path': "/home/app/app/${PROJECT_NAME}01",
+              'instance_name': "${PROJECT_NAME}01",     //"$ProjectName",
+              'user': 'app',
+              'hosts': "saas-test-app02",//ip ohostname r 
+              'deploy_file': "$BAKUP_PATH/${JOB_NAME}/${TAG_FILE}",
+              'ops': "$OPERATE",
+              'start_cmd': "pm2 delete  spring.yaml && pm2 start spring.yaml",
+              'service_port': "$port",   //chker port is listenning
+              'java_bin': "java", //如果找不到环境变量则写具体路径
+              'ARGS': "-Dserver.port={{service_port}} -jar ${TAG_FILE} ",
+              'LOG_FILE': "~/.pm2/logs/demo.log",  //日志路径，可以做日志分离，比如正常日志和错误日志ERROR_FILE,OUT_FILE,默认是输出到 /dev/null
+           ]
+          ) 
+        }
+//         
+      }  
+    }    
+       
+  }
+  
+  post {
+    always {
+      deleteDir()  // 清除工作空间
+      println(VERSION_NUMBER);
+      sh(returnStdout: true, script: " ls -tl   $BAKUP_PATH/${JOB_NAME}/*  | awk '{if(NR>$VERSION_NUMBER){print \" rm -f \" \$NF}}' | sh ")
+    }
+  }
+}
