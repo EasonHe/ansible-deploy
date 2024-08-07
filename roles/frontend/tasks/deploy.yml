@@ -1,5 +1,5 @@
 - name: copy {{ deploy_file }}  to remote path
-  synchronize: src={{deploy_file}}  dest={{deploy_path}}
+  synchronize: src={{deploy_file}}  dest={{deploy_path}}  rsync_opts="--chmod=755"
 - name: link  
   file:  path="{{ link_path }}/{{ link_name }}"  state=link force=yes src="{{deploy_path}}/{{deploy_file.rsplit('/',1)[-1]}}"
 - name: the  path have  files 
